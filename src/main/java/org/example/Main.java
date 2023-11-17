@@ -45,10 +45,16 @@ public class Main {
             funkosFunkos.forEach(System.out::println);
 
        double funkoCaro= funkosFunkos.stream()
-                .map(funko -> funko.getPrecio)
-                .max(double::compareTo)
+                .map(Funko::getPrecio)
+                .max(Double::compareTo)
+               .orElse(null);
 
 
+
+            funkosFunkos.stream()
+                    .filter(f->f.getPrecio()==funkoCaro)
+                    .map(Funko::getNombre)
+                    .forEach(System.out::println);
 
         } catch (IOException e) {
             e.printStackTrace(System.out);
