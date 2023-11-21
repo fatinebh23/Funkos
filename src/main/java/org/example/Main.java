@@ -2,6 +2,8 @@ package org.example;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -129,9 +131,60 @@ public class Main {
 
 
 
+            Path rutaTxt = Path.of(".", "src", "main", "resources", "backup.txt");
+            String miRutaBackup = "/home/daw2/IdeaProjects/Tema 3-TécnicadeAccesoaDatos /Funkos/src/main/resources/backup.txt";
+
+            backup(funkosFunkos,miRutaBackup);
+
+
+
 
         } catch (IOException e) {
             e.printStackTrace(System.out);
         }
+    }
+
+    // hago el backup como si fuera csv para que el restore sea más sencillo
+    public static void backup(List lista, String ruta) throws IOException {
+
+        // Borra el contenido del archivo
+        Files.write(Paths.get(ruta), new byte[0]); // Escribe un array de bytes vacío para limpiar el archivo
+
+
+        for (int i = 0; i < lista.size(); i++) {
+            try {
+                Files.writeString(Paths.get(ruta), lista.get(i).toString(),  StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+    public static List restore(String ruta) throws IOException {
+
+        Stream<String> contenidoFichero = Files.lines(Paths.get(ruta));
+
+        List<List<String>> funkosTxtString = contenidoFichero.map(l -> Arrays.asList(l.split(COMMA_DELIMITER))).toList();
+
+        List<Funko> funkosTxtFunkos = new ArrayList<>();
+
+        for (int i = 0; i < funkosTxtString.size(); i++) {
+            List<String> unFunko = funkosTxtString.get(i);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            Funko ejemplo = new Funko();
+            ejemplo.setCod(unFunko.get(0));
+            ejemplo.setNombre(unFunko.get(1));
+            ejemplo.setModelo(unFunko.get(2));
+            ejemplo.setPrecio(Double.parseDouble(unFunko.get(3)));
+            ejemplo.setFecha_lanzamiento(LocalDate.parse(unFunko.get(4), formatter));
+
+            funkosTxtFunkos.add(ejemplo);
+        }
+
+        return funkosTxtFunkos;
+
+
     }
 }

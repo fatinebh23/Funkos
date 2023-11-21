@@ -16,4 +16,8 @@ public class Funko {
     private double precio;
     private LocalDate fecha_lanzamiento;
 
+    @Override
+    public String toString() {
+        return  cod + "," + nombre + ", " + modelo + ", " + precio + ", " + fecha_lanzamiento + "\n";
+    }
 }
