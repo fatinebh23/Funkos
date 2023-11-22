@@ -1,9 +1,7 @@
 package org.example;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -132,10 +130,13 @@ public class Main {
 
 
             Path rutaTxt = Path.of(".", "src", "main", "resources", "backup.txt");
-            String miRutaBackup = "/home/daw2/IdeaProjects/Tema 3-TécnicadeAccesoaDatos /Funkos/src/main/resources/backup.txt";
+            String miRutaBackup = "/home/daw2/IdeaProjects/Tema 3-TécnicadeAccesoaDatos /Funkos/src/main/resources/backup.dat";
 
-            backup(funkosFunkos,miRutaBackup);
 
+            // Realizar el backup de los objetos
+            backup(funkosFunkos, miRutaBackup);
+
+            // Restaurar los objetos desde el archivo
 
 
 
@@ -144,8 +145,36 @@ public class Main {
         }
     }
 
-    // hago el backup como si fuera csv para que el restore sea más sencillo
-    public static void backup(List lista, String ruta) throws IOException {
+
+//Método para realizar la serialización de objetos Funko a un archivo .dat
+    public static void backup(List<Funko> funkos, String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(funkos);
+            System.out.println("Backup realizado con éxito.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método para realizar la deserialización de objetos Funko desde un archivo .dat
+    public static void restore(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            Funko[] funkos = (Funko[]) ois.readObject();
+
+            // Mostrar los objetos leídos
+            System.out.println("Objetos leídos desde el archivo:");
+            for (Funko funko : funkos) {
+                System.out.println(funko.toString());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+// hago el backup como si fuera csv para que el restore sea más sencillo TXT
+    /*public static void backup(List lista, String ruta) throws IOException {
 
         // Borra el contenido del archivo
         Files.write(Paths.get(ruta), new byte[0]); // Escribe un array de bytes vacío para limpiar el archivo
@@ -159,9 +188,9 @@ public class Main {
             }
         }
     }
-
-
-    public static List restore(String ruta) throws IOException {
+*/
+    //TXT
+    /*public static List restore(String ruta) throws IOException {
 
         Stream<String> contenidoFichero = Files.lines(Paths.get(ruta));
 
@@ -187,4 +216,5 @@ public class Main {
 
 
     }
-}
+
+     */}
