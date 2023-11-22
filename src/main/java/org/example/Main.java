@@ -2,12 +2,10 @@ package org.example;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 import java.nio.file.Path;
 
@@ -25,7 +23,7 @@ public class Main {
 
 
 
-
+/*
             for (int i = 1; i < funkosString.size(); i++) {
                 List<String> unFunko = funkosString.get(i);
 
@@ -42,9 +40,9 @@ public class Main {
                 funkosFunkos.add(ejemplo);
             }
 
-
+*/
             funkosFunkos.forEach(System.out::println);
-
+/*
             //Funko más caro
        double funkoCaro= funkosFunkos.stream()
                 .map(Funko::getPrecio)
@@ -126,7 +124,7 @@ public class Main {
                     .map(Funko::getNombre)
                     .forEach(System.out::println);
 
-
+*/
 
 
             Path rutaTxt = Path.of(".", "src", "main", "resources", "backup.txt");
@@ -217,4 +215,65 @@ public class Main {
 
     }
 
-     */}
+     */
+
+    public static Double masCaro(List<Funko> lista) {
+        // SE PODRÍA HACER MEJOR
+        Double precioMax = lista.stream()
+                .map(Funko::getPrecio)
+                .max(Double::compareTo)
+                .orElse(null);
+
+        // Funko más caro: NOMBRE
+        System.out.println("FUNKO MÁS CARO:");
+        lista.stream()
+                .filter(funko -> funko.getPrecio() == precioMax)
+                .map(Funko::getNombre)
+                .forEach(System.out::println);
+
+        return precioMax;
+    }
+
+    public static Double precioMedio(List<Funko> lista) {
+        // Para conseguir dos decimales y € al final
+        Locale locale = new Locale("es", "ES"); // Definir la localidad para español
+        NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(locale); // Obtener un formateador de moneda para la localidad española
+        formatoMoneda.setMaximumFractionDigits(2); // Establecer el número de decimales a dos
+
+        Double mediaPrecioFunkos = lista.stream()
+                .mapToDouble(Funko::getPrecio)
+                .average().getAsDouble();
+
+        String montoFormateado = formatoMoneda.format(mediaPrecioFunkos);
+        System.out.println("PRECIO MEDIO: " + montoFormateado);
+        return mediaPrecioFunkos;
+    }
+
+    public static void agrupadoPorModelo(List<Funko> lista, String modelo) {
+        System.out.println("FUNKOS " + modelo + ":");
+        lista.stream()
+                .filter(funko -> Objects.equals(funko.getModelo(), modelo))
+                .map(Funko::getNombre)
+                .forEach(System.out::println);
+    }
+
+    public static void cantidadPorModelo(List<Funko> lista, String modelo) {
+        System.out.println("NÚMERO DE FUNKOS " + modelo + ":");
+        long cantidadMarvel = lista.stream()
+                .filter(funko -> Objects.equals(funko.getModelo(), modelo))
+                .count();
+
+        System.out.println(cantidadMarvel);
+    }
+
+    public static void funkosPorAnyo(List<Funko> lista, int anyo) {
+        System.out.println("FUNKOS DE " + anyo);
+        lista.stream()
+                .filter(funko -> funko.getFecha_lanzamiento().getYear() == anyo)
+                .map(Funko::getNombre)
+                .forEach(System.out::println);
+
+
+    }
+
+}
